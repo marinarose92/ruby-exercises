@@ -2,9 +2,8 @@
 
 The assignment for this project is as follows:
 
-```
-Build a tic-tac-toe game on the command line where two human players can play against each other and the board is displayed in between turns.
-```
+>Build a tic-tac-toe game on the command line where two >human players can play against each other and the >board is displayed in between turns.
+
 
 The `start_game` method begins the same by calling the `new_board` method which renders a new Tic Tac Toe board on screen. I used a two-dimensional array to display each position in three columns and three rows.
 
