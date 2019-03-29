@@ -198,7 +198,7 @@ class Hangman
     def load_game(save_game)
         puts " "
         p "Loading game . . ."
-        load_game = YAML.load(data)
+        load_game = YAML.load(Hangman)
         data = load_game["blank_spaces_arr"]
         
     end

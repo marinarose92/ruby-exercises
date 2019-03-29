@@ -1,0 +1,10 @@
+--- !ruby/object:Hangman
+blank_spaces_arr:
+- _
+- _
+- _
+- _
+- _
+- _
+- _
+wrong_answers: 0
