@@ -18,9 +18,10 @@ class Hangman
         @blank_spaces_arr = []
         @blank_spaces_arr.fill("_", @blank_spaces_arr.size, @@word.length)
         @wrong_answers = 0
+        @wrong_guesses = []
         introduction
         options_display
-        options_logic 
+        options_logic
         options_display
         hangman_body
         player_guess
@@ -72,13 +73,13 @@ class Hangman
         Hangman.new
     end
 
-    def options_logic(input)
+    def options_logic(input = nil)
         if input == "options"
             options
         elsif input == "1"
             new_game
         elsif input == "2"
-            load_game(save_game)
+            load_game
         elsif input == "3"
             rules
         elsif input == "4"
@@ -192,14 +193,13 @@ class Hangman
         puts " "
         p "Saving game . . ."
         yaml = YAML.dump(self)
-        File.open("save.txt", "w"){|file| file.write(yaml)}
+        File.open("save.yml", "w"){|file| file.write(yaml)}
     end
 
-    def load_game(save_game)
+    def load_game
         puts " "
         p "Loading game . . ."
-        load_game = YAML.load(Hangman)
-        data = load_game["blank_spaces_arr"]
+        load_game = YAML.load("save.yml")
         
     end
 
@@ -224,6 +224,8 @@ class Hangman
                 puts " "
                 playing_board(guess)
                 puts " "
+                @wrong_guesses.push(guess + " ")
+                puts "Wrong: #{@wrong_guesses.join("") }"
                 puts "You have #{(7 - @wrong_answers)} wrong guesses remaining."
             end
         end
