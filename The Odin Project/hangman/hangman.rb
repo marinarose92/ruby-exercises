@@ -6,6 +6,7 @@ class Hangman
 
     @@dict_arr = @@dictionary.split()
     # this is an array of only words between 5-12 letters
+
     @@right_length = @@dict_arr.select do |i| 
         if i.length >= 5 && i.length <= 12
             i
@@ -21,8 +22,6 @@ class Hangman
         introduction
         options_display
         options_logic
-       # options_display
-        hangman_body
 	end
 
 	def introduction
@@ -58,7 +57,6 @@ class Hangman
         puts "N E W  G A M E  B E G I N".rjust(36)
         puts "======================================================"
         puts " "
-        hangman_body
         player_guess
     end
 
@@ -82,7 +80,7 @@ class Hangman
             save_game
         elsif input == "5"
             exit
-            options_logic(input)
+            #options_logic(input)
         else
             #puts "Please select a valid option above."
         end
@@ -168,7 +166,6 @@ class Hangman
         letters_arr = @word.split("")
             correct_positions = letters_arr.each_index.select{|i| letters_arr[i] == guess}
             # returns => [0] if position 0
-            # this handles if there's only one correct letter
             if correct_positions.length == 1
                 if guess == letters_arr[correct_positions.join.to_i]
                     @blank_spaces_arr[correct_positions.join.to_i] = letters_arr[correct_positions.join.to_i]
@@ -194,7 +191,9 @@ class Hangman
             end
                 p @blank_spaces_arr.join
                 puts " "
+                if @wrong_answers >= 1
                 puts "Wrong: #{@wrong_guesses.join("") }"
+                end
     end
     
     def parse_player_input
@@ -205,9 +204,10 @@ class Hangman
         puts " "
         p "Saving game . . ."
         yaml = YAML.dump({
-            @blank_spaces_arr => @blank_spaces_arr,
-            @wrong_guesses => @wrong_guesses,
-            @wrong_answers => @wrong_answers
+            :blank_spaces_arr => @blank_spaces_arr,
+            :wrong_guesses => @wrong_guesses,
+            :wrong_answers => @wrong_answers,
+            :word => @word
         })
         File.open("save.yml", "w"){|file| file.write(yaml)}
     end
@@ -215,21 +215,27 @@ class Hangman
     def load_game
         puts " "
         p "Loading game . . ."
+        puts " "
         data = YAML.load File.read("save.yml")
         @blank_spaces_arr = data[:blank_spaces_arr]
         @wrong_guesses = data[:wrong_guesses]
         @wrong_answers = data[:wrong_answers]
-
-        #hangman_body
+        @word = data[:word]
+        puts " "
+        p @blank_spaces_arr.join
+        puts " "
+        puts "Wrong: #{@wrong_guesses.join("") }"
+        puts " "
         puts "You have #{(7 - @wrong_answers)} wrong guesses remaining."
-        p @blank_spaces_arr.join  
-        
+        player_guess
     end
 
     def player_guess
-        while @wrong_answers <= 6
+        hangman_body
+        p @blank_spaces_arr.join
+        while @wrong_answers < 7
             puts ""
-            puts "Please  enter your guess."
+            puts "Please enter your guess."
             puts " "
             guess = parse_player_input
             if guess == @word
@@ -248,7 +254,12 @@ class Hangman
                 puts "You have #{(7 - @wrong_answers)} wrong guesses remaining."
             end
         end
+        puts " "
         puts "Out of guesses!"
+        puts " "
+        puts hangman_body
+        puts " "
+        puts "You lose!"
 end
 
 end

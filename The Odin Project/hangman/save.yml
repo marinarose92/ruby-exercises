@@ -1,17 +1,18 @@
 ---
-? &1
-- _
-- _
-- e
+:blank_spaces_arr:
 - _
 - _
 - _
 - _
-- e
-: *1
-? &2
-- 'f '
-- " "
-- " "
-: *2
-3: 3
+- i
+- _
+- _
+- i
+- _
+- _
+:wrong_guesses:
+- 'e '
+- 'r '
+- 'a '
+:wrong_answers: 3
+:word: conniption
