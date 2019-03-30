@@ -11,21 +11,18 @@ class Hangman
             i
         end
     end
-
-    @@word = @@right_length.sample.downcase
     
     def initialize
+        @word = @@right_length.sample.downcase
         @blank_spaces_arr = []
-        @blank_spaces_arr.fill("_", @blank_spaces_arr.size, @@word.length)
+        @blank_spaces_arr.fill("_", @blank_spaces_arr.size, @word.length)
         @wrong_answers = 0
         @wrong_guesses = []
         introduction
         options_display
         options_logic
-        options_display
+       # options_display
         hangman_body
-        player_guess
-        playing_board
 	end
 
 	def introduction
@@ -63,7 +60,6 @@ class Hangman
         puts " "
         hangman_body
         player_guess
-        playing_board
     end
 
     def exit                
@@ -88,7 +84,7 @@ class Hangman
             exit
             options_logic(input)
         else
-            puts "Please select a valid option above."
+            #puts "Please select a valid option above."
         end
     end
 
@@ -108,6 +104,7 @@ class Hangman
 
 	def hangman_body
         gallows = "   ----"
+        noose = "   |  |"
         head = "   O  |"
         empty = "      |"
         body = "   |  |"
@@ -123,32 +120,44 @@ class Hangman
             puts empty
             when 1
             puts gallows
-            puts head
+            puts noose
             puts empty
             puts empty
             puts empty
             when 2
             puts gallows
+            puts noose
             puts head
-            puts body
+            puts empty
+            puts empty
             puts empty
             when 3
             puts gallows
+            puts noose
             puts head
-            puts left_arm
+            puts body
             puts empty
             when 4
             puts gallows
+            puts noose
             puts head
-            puts both_arms
+            puts left_arm
             puts empty
             when 5
             puts gallows
+            puts noose
+            puts head
+            puts both_arms
+            puts empty
+            when 6
+            puts gallows
+            puts noose
             puts head
             puts both_arms
             puts left_leg
-            when 6
+            when 7
             puts gallows
+            puts noose
             puts head
             puts both_arms
             puts both_legs
@@ -156,8 +165,7 @@ class Hangman
     end
 
     def playing_board(guess)
-        letters_arr = @@word.split("")
-        # wrap the below in some sort of loop?
+        letters_arr = @word.split("")
             correct_positions = letters_arr.each_index.select{|i| letters_arr[i] == guess}
             # returns => [0] if position 0
             # this handles if there's only one correct letter
@@ -169,7 +177,7 @@ class Hangman
             elsif correct_positions.length > 1
                 # make correct letters appear in the right places
                 correct_positions.each do |position|
-                    p position
+                    #p position
                     if guess == letters_arr[position]
                         @blank_spaces_arr[position] = letters_arr[position]
                     end
@@ -178,39 +186,53 @@ class Hangman
                 puts "That letter is incorrect."
                 puts "Please guess again."
                 puts " "
+                @wrong_guesses.push("#{guess} ")
+                puts " "
                 @wrong_answers += 1
                 hangman_body
                 puts " "
             end
                 p @blank_spaces_arr.join
+                puts " "
+                puts "Wrong: #{@wrong_guesses.join("") }"
     end
     
     def parse_player_input
-        guess_arr = gets.chomp
+        guess = gets.chomp
     end
 
     def save_game
         puts " "
         p "Saving game . . ."
-        yaml = YAML.dump(self)
+        yaml = YAML.dump({
+            @blank_spaces_arr => @blank_spaces_arr,
+            @wrong_guesses => @wrong_guesses,
+            @wrong_answers => @wrong_answers
+        })
         File.open("save.yml", "w"){|file| file.write(yaml)}
     end
 
     def load_game
         puts " "
         p "Loading game . . ."
-        load_game = YAML.load("save.yml")
+        data = YAML.load File.read("save.yml")
+        @blank_spaces_arr = data[:blank_spaces_arr]
+        @wrong_guesses = data[:wrong_guesses]
+        @wrong_answers = data[:wrong_answers]
+
+        #hangman_body
+        puts "You have #{(7 - @wrong_answers)} wrong guesses remaining."
+        p @blank_spaces_arr.join  
         
     end
 
     def player_guess
-        p @@word
-        p "#{@@word} is #{@@word.length} letters long."
         while @wrong_answers <= 6
             puts ""
-            puts "Please type a word or letter."
+            puts "Please  enter your guess."
+            puts " "
             guess = parse_player_input
-            if guess == @@word
+            if guess == @word
                 puts "You win!"
             elsif guess == "options"
                 puts " "
@@ -220,15 +242,13 @@ class Hangman
             elsif guess == "save"
                 save_game
             else
-                p @@word
                 puts " "
                 playing_board(guess)
                 puts " "
-                @wrong_guesses.push(guess + " ")
-                puts "Wrong: #{@wrong_guesses.join("") }"
                 puts "You have #{(7 - @wrong_answers)} wrong guesses remaining."
             end
         end
+        puts "Out of guesses!"
 end
 
 end

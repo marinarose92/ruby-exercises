@@ -1,11 +1,17 @@
---- !ruby/object:Hangman
-blank_spaces_arr:
+---
+? &1
+- _
+- _
+- e
 - _
 - _
 - _
 - _
-- _
-- _
-- _
-- _
-wrong_answers: 2
+- e
+: *1
+? &2
+- 'f '
+- " "
+- " "
+: *2
+3: 3
