@@ -57,7 +57,7 @@ class Hangman
         puts "N E W  G A M E  B E G I N".rjust(36)
         puts "======================================================"
         puts " "
-        player_guess
+        display_feedback
     end
 
     def exit                
@@ -93,11 +93,11 @@ class Hangman
         puts " "
         puts "1. The computer will select a word from its dictionary"
         # the word is between 5 and 12 characters
-        puts "2. You have 6 guesses to guess the word."
+        puts "2. You have 7 guesses to guess the word."
         puts " "
         hangman_body
-        player_guess
-        playing_board
+        display_feedback
+        check_player_guesses
 	end
 
 	def hangman_body
@@ -162,7 +162,7 @@ class Hangman
         end
     end
 
-    def playing_board(guess)
+    def check_player_guesses(guess)
         letters_arr = @word.split("")
             correct_positions = letters_arr.each_index.select{|i| letters_arr[i] == guess}
             # returns => [0] if position 0
@@ -227,11 +227,12 @@ class Hangman
         puts "Wrong: #{@wrong_guesses.join("") }"
         puts " "
         puts "You have #{(7 - @wrong_answers)} wrong guesses remaining."
-        player_guess
+        display_feedback
     end
 
-    def player_guess
+    def display_feedback
         hangman_body
+        p @word
         p @blank_spaces_arr.join
         while @wrong_answers < 7
             puts ""
@@ -240,6 +241,9 @@ class Hangman
             guess = parse_player_input
             if guess == @word
                 puts "You win!"
+            elsif @wrong_guesses.include?(guess)
+                puts "You've already guessed that letter."
+                display_feedback
             elsif guess == "options"
                 puts " "
                 options_display
@@ -249,9 +253,15 @@ class Hangman
                 save_game
             else
                 puts " "
-                playing_board(guess)
+                check_player_guesses(guess)
                 puts " "
                 puts "You have #{(7 - @wrong_answers)} wrong guesses remaining."
+                if @blank_spaces_arr.join == @word
+                    puts " "
+                    print "You win!"
+                    puts " "
+                    Hangman.new
+                end
             end
         end
         puts " "
